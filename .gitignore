@@ -9,3 +9,4 @@ playwright-report/
 
 # Installed via the pnpm workspace root
 node_modules/
+gif-out/

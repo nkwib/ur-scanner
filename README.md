@@ -4,7 +4,7 @@
 
 [Try it with your phone](#live-demo) · [Fountain-code explainer](docs/explanation/fountain-codes.md) · [Docs](#documentation)
 
-![A laptop showing an animated QR next to the receiver's progress ring at 43%, 3 of 4 parts.](docs/assets/demo.png)
+![Animated demo: the sender cycles fountain-coded QR frames while the receiver ring fills and 156 bytes decode.](https://raw.githubusercontent.com/nkwib/ur-scanner/main/.github/assets/demo.gif)
 
 QR is a zero-infrastructure transport: no pairing, no network, no accounts, works across an air gap and in a power cut. But one QR code caps out around 3 KB, so anything larger has to be split across an animated sequence of frames. [BC-UR](https://developer.blockchaincommons.com/ur/) (Uniform Resources) fountain-codes that sequence so a camera can reconstruct the whole payload even while missing many frames, and the receiver can join the stream at any point. Senders are everywhere (every hardware wallet ships one); the browser lacked a good, framework-agnostic *receiving* end. This is that end.
 
