@@ -1,0 +1,9 @@
+# Cloudflare Workers + Static Assets config for the ur-scanner docs site.
+# Deploy with `wrangler deploy` after `pnpm build` produces ./build.
+
+name = "ur-scanner-docs"
+compatibility_date = "2026-05-04"
+
+[assets]
+directory = "./build"
+not_found_handling = "404-page"

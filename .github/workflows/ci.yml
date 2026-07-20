@@ -23,3 +23,25 @@ jobs:
       - run: pnpm demo:build
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm e2e
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # docs-site depends on the library via file:.. and imports its dist/,
+      # so build the package before installing/building the docs site.
+      - run: pnpm install
+      - run: pnpm build
+      # docs-site is its own pnpm root (docs-site/pnpm-workspace.yaml).
+      - name: Install docs-site
+        working-directory: docs-site
+        run: pnpm install
+      - name: Build docs-site
+        working-directory: docs-site
+        run: pnpm build
