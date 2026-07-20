@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>@blocco/ur-scanner — live demo</title>
+		<style>
+			:root {
+				color-scheme: light dark;
+				--bg: #0b0f14;
+				--card: #151b23;
+				--fg: #e6edf3;
+				--muted: #9aa7b4;
+				--accent: #4ade80;
+			}
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				margin: 0;
+				font: 15px/1.5 system-ui, sans-serif;
+				background: var(--bg);
+				color: var(--fg);
+			}
+			header {
+				padding: 20px;
+				text-align: center;
+			}
+			header h1 {
+				margin: 0 0 4px;
+				font-size: 20px;
+			}
+			header p {
+				margin: 0;
+				color: var(--muted);
+			}
+			.grid {
+				display: grid;
+				gap: 16px;
+				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+				max-width: 900px;
+				margin: 0 auto;
+				padding: 0 16px 40px;
+			}
+			.card {
+				background: var(--card);
+				border: 1px solid #2a333d;
+				border-radius: 14px;
+				padding: 16px;
+			}
+			.card h2 {
+				margin: 0 0 12px;
+				font-size: 15px;
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+				color: var(--muted);
+			}
+			canvas {
+				width: 100%;
+				max-width: 320px;
+				image-rendering: pixelated;
+				background: #fff;
+				border-radius: 8px;
+				display: block;
+				margin: 0 auto;
+			}
+			label {
+				display: flex;
+				justify-content: space-between;
+				gap: 8px;
+				align-items: center;
+				margin: 8px 0;
+				color: var(--muted);
+				font-size: 13px;
+			}
+			input,
+			select,
+			textarea,
+			button {
+				font: inherit;
+				color: inherit;
+				background: #0e141b;
+				border: 1px solid #2a333d;
+				border-radius: 8px;
+				padding: 7px 10px;
+			}
+			textarea {
+				width: 100%;
+				min-height: 60px;
+				resize: vertical;
+			}
+			button {
+				cursor: pointer;
+				background: #1f2933;
+			}
+			button:hover {
+				border-color: var(--accent);
+			}
+			.row {
+				display: flex;
+				gap: 8px;
+				flex-wrap: wrap;
+				margin-top: 10px;
+			}
+			ur-scanner {
+				--x: 0;
+			}
+			ur-scanner::part(ring) .fill {
+				stroke: var(--accent);
+			}
+			#rx-status {
+				margin-top: 10px;
+				color: var(--muted);
+				min-height: 1.5em;
+			}
+			#rx-out {
+				margin-top: 8px;
+				padding: 10px;
+				background: #0e141b;
+				border-radius: 8px;
+				white-space: pre-wrap;
+				word-break: break-word;
+				font-family: ui-monospace, monospace;
+				font-size: 13px;
+			}
+			.hint {
+				color: var(--muted);
+				font-size: 12px;
+				margin-top: 6px;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1>@blocco/ur-scanner</h1>
+			<p>Open this page on a laptop and a phone. Point the phone at the laptop's QR.</p>
+		</header>
+		<div class="grid">
+			<section class="card">
+				<h2>Sender · animated UR display</h2>
+				<canvas id="qr" width="320" height="320"></canvas>
+				<p class="hint" id="part-label"></p>
+				<label>Payload <textarea id="payload">Uniform Resources make multi-KB transfer over a camera robust. This message is long enough to need several fountain-coded frames. Scan it with your phone.</textarea></label>
+				<label>Fragment size (bytes) <input id="fragment" type="number" value="40" min="10" max="400" /></label>
+				<label>Display fps <input id="fps" type="number" value="6" min="1" max="20" /></label>
+				<label>ECC level
+					<select id="ecc"><option>L</option><option selected>M</option><option>Q</option><option>H</option></select>
+				</label>
+				<p class="hint">Source fragments: <span id="frag-count">—</span> (the stream is rateless; it keeps emitting mixed frames)</p>
+				<div class="row">
+					<button id="encode">Encode &amp; play</button>
+					<button id="stop-display">Stop</button>
+				</div>
+			</section>
+
+			<section class="card">
+				<h2>Receiver · &lt;ur-scanner&gt;</h2>
+				<ur-scanner id="scanner" expected-type="bytes"></ur-scanner>
+				<div class="row">
+					<button id="start-camera">Start camera</button>
+					<button id="simulate">Simulate (no camera)</button>
+					<button id="reset">Reset</button>
+				</div>
+				<p id="rx-status">Idle</p>
+				<pre id="rx-out" hidden></pre>
+				<p class="hint">All decoding is local. No frame ever leaves this page.</p>
+			</section>
+		</div>
+		<script type="module" src="./dist/demo.js"></script>
+	</body>
+</html>

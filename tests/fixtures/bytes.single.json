@@ -1,0 +1,9 @@
+{
+	"type": "bytes",
+	"payloadHex": "68656c6c6f207572",
+	"fragmentCount": 1,
+	"parts": [
+		"ur:bytes/fdisihjzjzjlcxkpjpsnkeaaln",
+		"ur:bytes/fdisihjzjzjlcxkpjpsnkeaaln"
+	]
+}

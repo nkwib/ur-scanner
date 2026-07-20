@@ -1,0 +1,11 @@
+# Build artifacts (published from CI; rebuild locally with pnpm build / demo:build)
+dist/
+demo/dist/
+
+# Test output
+coverage/
+test-results/
+playwright-report/
+
+# Installed via the pnpm workspace root
+node_modules/

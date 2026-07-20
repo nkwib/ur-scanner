@@ -1,0 +1,88 @@
+{
+	"name": "@blocco/ur-scanner",
+	"version": "0.1.0",
+	"description": "Browser receiver for animated QR codes carrying BC-UR (Uniform Resources) payloads. Camera to bytes, no wallet required. Framework-agnostic decode core, pluggable frame sources, and a drop-in <ur-scanner> web component.",
+	"license": "MIT",
+	"author": "Gabriele Magno",
+	"type": "module",
+	"sideEffects": [
+		"./dist/element.js",
+		"./src/element.ts"
+	],
+	"engines": {
+		"node": ">=20"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./element": {
+			"types": "./dist/element.d.ts",
+			"import": "./dist/element.js"
+		},
+		"./package.json": "./package.json"
+	},
+	"files": [
+		"dist",
+		"src",
+		"docs",
+		"examples",
+		"README.md",
+		"CHANGELOG.md",
+		"CONTRIBUTING.md",
+		"SECURITY.md",
+		"LICENSE"
+	],
+	"keywords": [
+		"bc-ur",
+		"ur",
+		"uniform-resources",
+		"qr",
+		"animated-qr",
+		"fountain-codes",
+		"barcode-detector",
+		"camera",
+		"air-gapped",
+		"web-component",
+		"scanner",
+		"offline"
+	],
+	"scripts": {
+		"build": "tsup",
+		"typecheck": "tsc -p tsconfig.json --noEmit",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"fixtures": "node scripts/gen-fixtures.mjs",
+		"demo:build": "node scripts/build-demo.mjs",
+		"e2e": "playwright test"
+	},
+	"dependencies": {
+		"@ngraveio/bc-ur": "^1.1.13"
+	},
+	"peerDependencies": {
+		"jsqr": "^1.4.0"
+	},
+	"peerDependenciesMeta": {
+		"jsqr": {
+			"optional": true
+		}
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.49.0",
+		"@types/node": "^22.10.0",
+		"buffer": "^6.0.3",
+		"esbuild": "^0.24.0",
+		"jsdom": "^25.0.1",
+		"jsqr": "^1.4.0",
+		"qrcode": "^1.5.4",
+		"tsup": "^8.3.5",
+		"typescript": "^5.7.2",
+		"vitest": "^2.1.8"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild"
+		]
+	}
+}

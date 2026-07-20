@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- Drop-in usage of <ur-scanner>. Import the side-effectful subpath, add the
+     element, listen for ur-complete. Bundle with any tool that resolves bare
+     ESM specifiers (Vite, esbuild, rollup, webpack). -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>ur-scanner drop-in</title>
+	</head>
+	<body>
+		<ur-scanner auto-start expected-type="bytes"></ur-scanner>
+		<pre id="out"></pre>
+
+		<script type="module">
+			import '@blocco/ur-scanner/element';
+
+			const scanner = document.querySelector('ur-scanner');
+			scanner.addEventListener('ur-progress', (e) => {
+				console.log(`${Math.round(e.detail.estimatedPercent * 100)}%`);
+			});
+			scanner.addEventListener('ur-complete', (e) => {
+				// e.detail.cbor is a Uint8Array. Payloads are just bytes.
+				document.getElementById('out').textContent = `Received ${e.detail.cbor.length} bytes`;
+				scanner.stop();
+			});
+			scanner.addEventListener('ur-error', (e) => {
+				console.error(e.detail.code, e.detail.message);
+			});
+		</script>
+	</body>
+</html>
