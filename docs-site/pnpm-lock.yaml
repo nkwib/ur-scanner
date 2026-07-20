@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@blocco/ur-scanner':
-        specifier: file:..
-        version: file:..(jsqr@1.4.0)
+        specifier: link:..
+        version: link:..
       '@ngraveio/bc-ur':
         specifier: ^1.1.13
         version: 1.1.13
@@ -86,15 +86,6 @@ packages:
 
   '@antfu/install-pkg@1.1.0':
     resolution: {integrity: sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ==}
-
-  '@blocco/ur-scanner@file:..':
-    resolution: {directory: .., type: directory}
-    engines: {node: '>=20'}
-    peerDependencies:
-      jsqr: ^1.4.0
-    peerDependenciesMeta:
-      jsqr:
-        optional: true
 
   '@braintree/sanitize-url@7.1.2':
     resolution: {integrity: sha512-jigsZK+sMF/cuiB7sERuo9V7N9jx+dhmHHnQyDSVdpZwVutaBu7WvNYqMDLSgFgfB30n452TP3vjDAvFC973mA==}
@@ -1608,12 +1599,6 @@ snapshots:
     dependencies:
       package-manager-detector: 1.7.0
       tinyexec: 1.2.4
-
-  '@blocco/ur-scanner@file:..(jsqr@1.4.0)':
-    dependencies:
-      '@ngraveio/bc-ur': 1.1.13
-    optionalDependencies:
-      jsqr: 1.4.0
 
   '@braintree/sanitize-url@7.1.2': {}
 
