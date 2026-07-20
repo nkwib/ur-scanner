@@ -4,6 +4,12 @@
 	"description": "Browser receiver for animated QR codes carrying BC-UR (Uniform Resources) payloads. Camera to bytes, no wallet required. Framework-agnostic decode core, pluggable frame sources, and a drop-in <ur-scanner> web component.",
 	"license": "MIT",
 	"author": "Gabriele Magno",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/nkwib/ur-scanner.git"
+	},
+	"homepage": "https://github.com/nkwib/ur-scanner#readme",
+	"bugs": "https://github.com/nkwib/ur-scanner/issues",
 	"type": "module",
 	"sideEffects": [
 		"./dist/element.js",
