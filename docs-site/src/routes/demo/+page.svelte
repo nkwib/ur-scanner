@@ -5,12 +5,12 @@
 
   // Sender controls
   let payload = $state(
-    'Uniform Resources make multi-KB transfer over a camera robust. This message is long enough to need several fountain-coded frames — point your phone at the QR on the left, or press Simulate to watch it decode on this one device.'
+    'Uniform Resources make multi-KB transfer over a camera robust. This message is long enough to need several fountain-coded frames. Point your phone at the QR on the left, or press Simulate to watch it decode on this one device.'
   );
   let fragment = $state(40);
   let fps = $state(6);
   let ecc = $state('M');
-  let fragCount = $state('—');
+  let fragCount = $state('...');
   let partLabel = $state('');
 
   // Receiver state
@@ -78,7 +78,7 @@
         rxStatus = `${Math.round(p.estimatedPercent * 100)}% · ${p.receivedParts}/${p.expectedPartCount} parts · seen ${p.framesSeen} frames`;
         narration =
           p.receivedParts <= 1
-            ? 'The decoder joined the stream on whatever frame arrived first — with fountain codes there is no frame 1 to wait for.'
+            ? 'The decoder joined the stream on whatever frame arrived first; with fountain codes there is no frame 1 to wait for.'
             : 'Each accepted frame carries fresh, mixed information, so order and drops do not matter. Progress is the decoder’s own estimate, not received ÷ total.';
       } else {
         rxStatus = 'Looking for an animated QR…';
@@ -92,17 +92,17 @@
       } catch {
         text = '(binary payload)';
       }
-      rxStatus = `Done — ${ur.cbor.length} bytes, type "${ur.type}"${ur.wasSinglePart ? ' (single-part; a static QR would have done)' : ''}`;
+      rxStatus = `Done: ${ur.cbor.length} bytes, type "${ur.type}"${ur.wasSinglePart ? ' (single-part; a static QR would have done)' : ''}`;
       rxOut = text;
       rxOutVisible = true;
       narration =
-        'Complete. The payload was rebuilt from a set of frames a little larger than the original — never a fixed “1..N” run.';
+        'Complete. The payload was rebuilt from a set of frames a little larger than the original, never a fixed “1..N” run.';
     });
     s.addEventListener('ur-error', (e) => {
       rxStatus = `${e.detail.code}: ${e.detail.message}`;
       if (e.detail.code === 'INSECURE_CONTEXT' || e.detail.code?.startsWith('CAMERA')) {
         cameraAvailable = false;
-        narration = 'The camera could not start. Fixture mode below runs the whole pipeline without one — press Simulate.';
+        narration = 'The camera could not start. Fixture mode below runs the whole pipeline without one. Press Simulate.';
       }
     });
   }
@@ -192,13 +192,13 @@
     <p class="fixture-note">
       No second device? <strong>Fixture mode</strong> replays a captured frame
       sequence and decodes it in-page, so you get the full experience on a single
-      device — no camera needed. All decoding is local; no frame ever leaves this
+      device, no camera needed. All decoding is local; no frame ever leaves this
       page.
     </p>
     {#if insecure}
       <p class="warn-banner">
         This page is on an insecure origin, so the camera is disabled. Fixture
-        mode still works — press <strong>Simulate</strong>.
+        mode still works. Press <strong>Simulate</strong>.
       </p>
     {/if}
   </header>
@@ -222,7 +222,7 @@
           <select bind:value={ecc}><option>L</option><option>M</option><option>Q</option><option>H</option></select>
         </label>
       </div>
-      <p class="hint">Source fragments: <strong>{fragCount}</strong> — the stream is rateless; it keeps emitting mixed frames.</p>
+      <p class="hint">Source fragments: <strong>{fragCount}</strong>: the stream is rateless; it keeps emitting mixed frames.</p>
       <div class="row">
         <button class="btn primary" onclick={startDisplay} disabled={!ready}>Encode &amp; play</button>
         <button class="btn ghost" onclick={stopDisplay} disabled={!ready}>Stop</button>
@@ -249,7 +249,7 @@
         <pre class="out">{rxOut}</pre>
       {/if}
       {#if !cameraAvailable && ready}
-        <p class="hint">Camera path unavailable here — that is expected on insecure origins or devices without a camera API. Fixture mode gives you the complete decode.</p>
+        <p class="hint">Camera path unavailable here. That is expected on insecure origins or devices without a camera API. Fixture mode gives you the complete decode.</p>
       {/if}
     </section>
   </div>

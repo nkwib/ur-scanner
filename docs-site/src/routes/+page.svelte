@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-  <title>ur-scanner — receive animated BC-UR QR codes in the browser</title>
+  <title>ur-scanner: receive animated BC-UR QR codes in the browser</title>
   <meta
     name="description"
     content="Camera to bytes, no wallet required. Fountain-coded animated UR makes multi-KB transfer robust on lossy cameras. The receiving end the web lacked, as a drop-in web component."
@@ -98,7 +98,7 @@
   <span class="kw">import</span> <span class="str">'@blocco/ur-scanner/element'</span>;
   <span class="kw">const</span> scanner = document.<span class="fn">querySelector</span>(<span class="str">'ur-scanner'</span>);
   scanner.<span class="fn">addEventListener</span>(<span class="str">'ur-complete'</span>, (e) =&gt; &lbrace;
-    <span class="cmt">// e.detail.cbor is a Uint8Array — payloads are just bytes.</span>
+    <span class="cmt">// e.detail.cbor is a Uint8Array; payloads are just bytes.</span>
     console.<span class="fn">log</span>(<span class="str">`received $&lbrace;e.detail.cbor.length&rbrace; bytes`</span>);
     scanner.<span class="fn">stop</span>();
   &rbrace;);
