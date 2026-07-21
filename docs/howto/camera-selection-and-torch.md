@@ -7,7 +7,7 @@
 The default constraints prefer the environment-facing camera, which is what you want for scanning another screen:
 
 ```ts
-import { fromCamera } from '@blocco/ur-scanner';
+import { fromCamera } from '@nkwib/ur-scanner';
 const cam = await fromCamera({ video, constraints: { video: { facingMode: 'environment' } } });
 ```
 

@@ -12,7 +12,7 @@ By the end you will have a sender page that displays an animated UR, a scanner p
 ## 0. Install
 
 ```bash
-npm i @blocco/ur-scanner @ngraveio/bc-ur
+npm i @nkwib/ur-scanner @ngraveio/bc-ur
 npm i jsqr   # optional fallback for browsers without a native BarcodeDetector
 ```
 
@@ -44,7 +44,7 @@ The fastest path is the web component. Import the browser-only `element` subpath
 <pre id="out"></pre>
 
 <script type="module">
-  import '@blocco/ur-scanner/element';
+  import '@nkwib/ur-scanner/element';
   const scanner = document.querySelector('ur-scanner');
   scanner.addEventListener('ur-complete', (e) => {
     const bytes = e.detail.cbor;                 // Uint8Array
@@ -60,7 +60,7 @@ Serve both pages over **HTTPS or `localhost`** (cameras refuse insecure origins)
 Prefer to own the loop? Use the headless core instead:
 
 ```ts
-import { fromCamera } from '@blocco/ur-scanner';
+import { fromCamera } from '@nkwib/ur-scanner';
 
 const cam = await fromCamera({
   video: document.querySelector('video')!,
@@ -76,7 +76,7 @@ const cam = await fromCamera({
 You can prove the whole pipeline on a single machine by feeding known frames. Capture a sequence from the sender and hand it to `fromFixture`, or set the web component's `fixture` attribute:
 
 ```ts
-import { fromFixture } from '@blocco/ur-scanner';
+import { fromFixture } from '@nkwib/ur-scanner';
 import { captureSequence } from '../examples/sender.js';
 
 const parts = captureSequence(new TextEncoder().encode('hello over an air gap'));
@@ -88,7 +88,7 @@ console.log(progress.complete, receiver.type); // true 'bytes'
 <!-- the element decodes its own attribute; great for demos and screenshots -->
 <ur-scanner id="s"></ur-scanner>
 <script type="module">
-  import '@blocco/ur-scanner/element';
+  import '@nkwib/ur-scanner/element';
   s.setAttribute('fixture', JSON.stringify(parts));
   s.start();
 </script>

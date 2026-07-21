@@ -2,7 +2,7 @@
  * `<ur-scanner>` - a framework-agnostic custom element wrapping the decode core
  * and camera source. Importing this module is BROWSER-ONLY (it extends
  * `HTMLElement` at evaluation time); in SSR frameworks import it from an
- * `onMount`/`useEffect`, or via the side-effectful `@blocco/ur-scanner/element`
+ * `onMount`/`useEffect`, or via the side-effectful `@nkwib/ur-scanner/element`
  * subpath. See `docs/howto/frameworks.md` and `docs/reference.md`.
  *
  * Attributes:  `expected-type`, `facing-mode`, `scan-interval`, `auto-start`,

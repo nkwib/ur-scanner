@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@blocco/ur-scanner": "link:..",
+    "@nkwib/ur-scanner": "link:..",
     "@ngraveio/bc-ur": "^1.1.13",
     "buffer": "^6.0.3",
     "jsqr": "^1.4.0",

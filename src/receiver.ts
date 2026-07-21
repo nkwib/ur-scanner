@@ -7,7 +7,7 @@
  *
  * @example
  * ```ts
- * import { URReceiver } from '@blocco/ur-scanner';
+ * import { URReceiver } from '@nkwib/ur-scanner';
  *
  * const rx = new URReceiver({ onComplete: (ur) => console.log(ur.cbor) });
  * for (const frame of frames) {

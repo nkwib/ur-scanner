@@ -2,7 +2,7 @@
  * Side-effectful, browser-only entry: importing it registers `<ur-scanner>`.
  *
  * ```ts
- * import '@blocco/ur-scanner/element';
+ * import '@nkwib/ur-scanner/element';
  * // <ur-scanner auto-start expected-type="bytes"></ur-scanner> now works
  * ```
  *

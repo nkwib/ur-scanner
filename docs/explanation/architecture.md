@@ -52,7 +52,7 @@ The **`QRDetector` seam** decouples "pixels to strings" from any specific engine
 
 ## Layer 3: `<ur-scanner>`, the optional UI
 
-A framework-agnostic custom element wrapping layers 1 and 2: a video preview, an SVG progress ring, a camera picker, a torch toggle, and an `aria-live` region. It emits DOM `CustomEvent`s (`ur-progress`, `ur-complete`, `ur-error`, `ur-ignore`) and exposes CSS `::part()`s. It lives behind the browser-only `@blocco/ur-scanner/element` subpath so importing the core never drags in `HTMLElement` (the SSR gotcha, see [frameworks](../howto/frameworks.md)).
+A framework-agnostic custom element wrapping layers 1 and 2: a video preview, an SVG progress ring, a camera picker, a torch toggle, and an `aria-live` region. It emits DOM `CustomEvent`s (`ur-progress`, `ur-complete`, `ur-error`, `ur-ignore`) and exposes CSS `::part()`s. It lives behind the browser-only `@nkwib/ur-scanner/element` subpath so importing the core never drags in `HTMLElement` (the SSR gotcha, see [frameworks](../howto/frameworks.md)).
 
 ## What belongs here vs upstream in bc-ur
 

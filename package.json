@@ -1,5 +1,5 @@
 {
-	"name": "@blocco/ur-scanner",
+	"name": "@nkwib/ur-scanner",
 	"version": "0.1.0",
 	"description": "Browser receiver for animated QR codes carrying BC-UR (Uniform Resources) payloads. Camera to bytes, no wallet required. Framework-agnostic decode core, pluggable frame sources, and a drop-in <ur-scanner> web component.",
 	"license": "MIT",
@@ -61,7 +61,8 @@
 		"test:watch": "vitest",
 		"fixtures": "node scripts/gen-fixtures.mjs",
 		"demo:build": "node scripts/build-demo.mjs",
-		"e2e": "playwright test"
+		"e2e": "playwright test",
+		"prepublishOnly": "pnpm build"
 	},
 	"dependencies": {
 		"@ngraveio/bc-ur": "^1.1.13"

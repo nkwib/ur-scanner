@@ -5,7 +5,7 @@ Not every user can grant a camera: locked-down desktops, kiosk browsers, denied 
 ## Single image
 
 ```ts
-import { fromImage } from '@blocco/ur-scanner';
+import { fromImage } from '@nkwib/ur-scanner';
 
 const input = document.querySelector('input[type=file]') as HTMLInputElement;
 input.addEventListener('change', async () => {
@@ -23,7 +23,7 @@ input.addEventListener('change', async () => {
 A single still holds one frame of an animated UR, which is rarely enough. Because UR is fountain-coded, a handful of screenshots taken at different moments is plenty. Thread one `receiver` across the calls so state accumulates:
 
 ```ts
-import { URReceiver, fromImage } from '@blocco/ur-scanner';
+import { URReceiver, fromImage } from '@nkwib/ur-scanner';
 
 const receiver = new URReceiver({ expectedType: 'bytes', onComplete: (ur) => use(ur.cbor) });
 for (const file of Array.from(input.files ?? [])) {

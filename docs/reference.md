@@ -6,8 +6,8 @@ Every public export, the `<ur-scanner>` surface, and the complete error taxonomy
 
 | Import | What | DOM-safe? |
 | --- | --- | --- |
-| `@blocco/ur-scanner` | core + frame sources + detector seam | yes (safe in SSR bundles) |
-| `@blocco/ur-scanner/element` | side-effectful: registers `<ur-scanner>` | no (browser only) |
+| `@nkwib/ur-scanner` | core + frame sources + detector seam | yes (safe in SSR bundles) |
+| `@nkwib/ur-scanner/element` | side-effectful: registers `<ur-scanner>` | no (browser only) |
 
 ## `class URReceiver`
 
@@ -97,7 +97,7 @@ Feed a `string[]` synchronously. `playFixture(parts, { intervalMs, loop, onFrame
 
 ## `<ur-scanner>` custom element
 
-Register with `import '@blocco/ur-scanner/element'` (or call `defineURScanner(tag?)`).
+Register with `import '@nkwib/ur-scanner/element'` (or call `defineURScanner(tag?)`).
 
 ### Attributes
 

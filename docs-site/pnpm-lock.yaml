@@ -8,7 +8,7 @@ importers:
 
   .:
     dependencies:
-      '@blocco/ur-scanner':
+      '@nkwib/ur-scanner':
         specifier: link:..
         version: link:..
       '@ngraveio/bc-ur':

@@ -24,7 +24,7 @@ This package commits such sequences under `tests/fixtures/*.json` (regenerate wi
 Fountain codes promise recovery under loss and reordering, so the test suite proves it. `shuffle` and `dropFraction` are exported, deterministic helpers:
 
 ```ts
-import { fromFixture, dropFraction, shuffle } from '@blocco/ur-scanner';
+import { fromFixture, dropFraction, shuffle } from '@nkwib/ur-scanner';
 import parts from './fixtures/bytes.multipart.json'; // { parts: string[], payloadHex, ... }
 
 it('recovers under 40% frame loss, out of order', () => {
@@ -49,7 +49,7 @@ const stream = canvas.captureStream(6); // a 6 fps MediaStream, no webcam
 In a real browser (Playwright) this drives the whole stack. In jsdom there is no canvas raster backend, so unit tests instead inject a **stub detector** that returns scripted strings and skips pixels entirely:
 
 ```ts
-import { fromImage, type QRDetector } from '@blocco/ur-scanner';
+import { fromImage, type QRDetector } from '@nkwib/ur-scanner';
 
 const stub: QRDetector = { async detect() { return [{ rawValue: parts.parts[0] }]; } };
 const { found } = await fromImage(document.createElement('img'), { detector: stub });

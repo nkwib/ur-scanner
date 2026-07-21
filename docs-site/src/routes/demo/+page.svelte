@@ -45,7 +45,7 @@
       // it in) evaluate. This is the Vite equivalent of the demo's esbuild inject.
       const Buffer = await installBcUrGlobals();
       const [bcur, qrcodeMod] = await Promise.all([import('@ngraveio/bc-ur'), import('qrcode')]);
-      await import('@blocco/ur-scanner/element'); // registers <ur-scanner>
+      await import('@nkwib/ur-scanner/element'); // registers <ur-scanner>
       if (disposed) return;
 
       mods = { UR: bcur.UR, UREncoder: bcur.UREncoder, QRCode: qrcodeMod.default ?? qrcodeMod, Buffer };

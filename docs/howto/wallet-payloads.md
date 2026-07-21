@@ -14,7 +14,7 @@ Keeping the split means you can receive any UR type, today or future, without wa
 If you only want extended public keys, reject everything else at the door:
 
 ```ts
-import { URReceiver } from '@blocco/ur-scanner';
+import { URReceiver } from '@nkwib/ur-scanner';
 
 const rx = new URReceiver({
   expectedType: 'crypto-hdkey',

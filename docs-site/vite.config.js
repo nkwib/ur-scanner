@@ -13,6 +13,6 @@ export default defineConfig({
     include: ['@ngraveio/bc-ur', 'qrcode', 'buffer', 'jsqr', 'mermaid']
   },
   ssr: {
-    noExternal: ['@blocco/ur-scanner']
+    noExternal: ['@nkwib/ur-scanner']
   }
 });

@@ -1,10 +1,10 @@
 /**
- * `@blocco/ur-scanner` - a browser receiver for animated QR codes carrying
+ * `@nkwib/ur-scanner` - a browser receiver for animated QR codes carrying
  * BC-UR (Uniform Resources) payloads. Camera to bytes, no wallet required.
  *
  * This entry is DOM-safe to import anywhere (including server bundles): nothing
  * here touches `window`/`HTMLElement` at module scope. The `<ur-scanner>` custom
- * element lives behind the browser-only `@blocco/ur-scanner/element` subpath.
+ * element lives behind the browser-only `@nkwib/ur-scanner/element` subpath.
  *
  * @packageDocumentation
  */

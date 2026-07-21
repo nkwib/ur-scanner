@@ -1,4 +1,4 @@
-# @blocco/ur-scanner
+# @nkwib/ur-scanner
 
 **Receive animated QR codes (BC-UR) in the browser: camera to bytes, no wallet required.**
 
@@ -21,7 +21,7 @@ pnpm demo:build && node scripts/serve-demo.mjs   # http://localhost:4173
 ## Install
 
 ```bash
-npm i @blocco/ur-scanner @ngraveio/bc-ur
+npm i @nkwib/ur-scanner @ngraveio/bc-ur
 # optional: a JS fallback for browsers without a native BarcodeDetector
 npm i jsqr
 ```
@@ -32,7 +32,7 @@ npm i jsqr
 <ur-scanner auto-start expected-type="bytes"></ur-scanner>
 
 <script type="module">
-  import '@blocco/ur-scanner/element';
+  import '@nkwib/ur-scanner/element';
   const scanner = document.querySelector('ur-scanner');
   scanner.addEventListener('ur-complete', (e) => {
     // e.detail.cbor is a Uint8Array. Payloads are just bytes.
@@ -46,7 +46,7 @@ npm i jsqr
 ## Headless
 
 ```ts
-import { URReceiver } from '@blocco/ur-scanner';
+import { URReceiver } from '@nkwib/ur-scanner';
 
 const receiver = new URReceiver({
   expectedType: 'bytes',

@@ -4,10 +4,10 @@
 
 ## The SSR / dynamic-import gotcha (read this first)
 
-`import '@blocco/ur-scanner/element'` evaluates a class that extends `HTMLElement`. In a server render (Next.js, SvelteKit, Nuxt, Astro SSR) `HTMLElement` is undefined and the import throws. Two fixes, both standard:
+`import '@nkwib/ur-scanner/element'` evaluates a class that extends `HTMLElement`. In a server render (Next.js, SvelteKit, Nuxt, Astro SSR) `HTMLElement` is undefined and the import throws. Two fixes, both standard:
 
 1. Import the element only in a browser-only lifecycle hook (`useEffect`, `onMount`), or
-2. Use the **headless core** (`@blocco/ur-scanner`, which is SSR-safe) and render your own markup.
+2. Use the **headless core** (`@nkwib/ur-scanner`, which is SSR-safe) and render your own markup.
 
 The core entry never touches the DOM at module scope, so importing `URReceiver` / `fromCamera` on the server is fine; only the `/element` subpath is browser-only.
 
@@ -16,7 +16,7 @@ The core entry never touches the DOM at module scope, so importing `URReceiver` 
 ```html
 <ur-scanner auto-start expected-type="bytes"></ur-scanner>
 <script type="module">
-  import '@blocco/ur-scanner/element';
+  import '@nkwib/ur-scanner/element';
   document.querySelector('ur-scanner')
     .addEventListener('ur-complete', (e) => console.log(e.detail.cbor));
 </script>
@@ -28,13 +28,13 @@ Import the element inside `useEffect` so it never runs during SSR. React passes 
 
 ```tsx
 import { useEffect, useRef } from 'react';
-import type { DecodedUR } from '@blocco/ur-scanner';
+import type { DecodedUR } from '@nkwib/ur-scanner';
 
 export function Scanner({ onBytes }: { onBytes: (ur: DecodedUR) => void }) {
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     let cancelled = false;
-    import('@blocco/ur-scanner/element').then(() => {
+    import('@nkwib/ur-scanner/element').then(() => {
       if (cancelled) return;
       const el = ref.current!;
       const done = (e: Event) => onBytes((e as CustomEvent<DecodedUR>).detail);
@@ -54,10 +54,10 @@ Custom-element events bind with `on:`. Guard the import for SSR with `browser` o
 ```svelte
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { DecodedUR } from '@blocco/ur-scanner';
+  import type { DecodedUR } from '@nkwib/ur-scanner';
   let scanner: HTMLElement;
   onMount(async () => {
-    await import('@blocco/ur-scanner/element'); // browser-only
+    await import('@nkwib/ur-scanner/element'); // browser-only
   });
   function complete(e: CustomEvent<DecodedUR>) {
     console.log(e.detail.cbor);
@@ -76,8 +76,8 @@ Tell the compiler `ur-scanner` is a custom element, then use `@` listeners. Impo
 ```vue
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import type { DecodedUR } from '@blocco/ur-scanner';
-onMounted(() => import('@blocco/ur-scanner/element'));
+import type { DecodedUR } from '@nkwib/ur-scanner';
+onMounted(() => import('@nkwib/ur-scanner/element'));
 const onComplete = (e: CustomEvent<DecodedUR>) => console.log(e.detail.cbor);
 </script>
 

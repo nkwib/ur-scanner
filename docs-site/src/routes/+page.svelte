@@ -41,7 +41,7 @@
         <a class="btn ghost" href="/docs/tutorial">Docs</a>
       </div>
 
-      <pre class="install"><span class="prompt">$</span> npm i @blocco/ur-scanner @ngraveio/bc-ur</pre>
+      <pre class="install"><span class="prompt">$</span> npm i @nkwib/ur-scanner @ngraveio/bc-ur</pre>
     </div>
 
     <aside class="shot">
@@ -95,7 +95,7 @@
       <pre class="code"><code><span class="tag">&lt;ur-scanner</span> <span class="attr">auto-start</span> <span class="attr">expected-type</span>=<span class="str">"bytes"</span><span class="tag">&gt;&lt;/ur-scanner&gt;</span>
 
 <span class="tag">&lt;script</span> <span class="attr">type</span>=<span class="str">"module"</span><span class="tag">&gt;</span>
-  <span class="kw">import</span> <span class="str">'@blocco/ur-scanner/element'</span>;
+  <span class="kw">import</span> <span class="str">'@nkwib/ur-scanner/element'</span>;
   <span class="kw">const</span> scanner = document.<span class="fn">querySelector</span>(<span class="str">'ur-scanner'</span>);
   scanner.<span class="fn">addEventListener</span>(<span class="str">'ur-complete'</span>, (e) =&gt; &lbrace;
     <span class="cmt">// e.detail.cbor is a Uint8Array; payloads are just bytes.</span>
