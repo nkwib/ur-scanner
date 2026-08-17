@@ -24,6 +24,36 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm e2e
 
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: pnpm install
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Decode core
+        run: |
+          {
+            echo '## Decode core'
+            pnpm bench
+          } >> "$GITHUB_STEP_SUMMARY"
+      # Chromium on Linux ships no BarcodeDetector, so this measures the jsqr
+      # fallback path. The native path is measured on a machine that has one.
+      - name: Camera loop (fake camera device)
+        env:
+          BENCH_ITERATIONS: 30
+          BENCH_REPEATS: 3
+        run: |
+          {
+            echo '## Camera loop'
+            pnpm bench:camera
+          } >> "$GITHUB_STEP_SUMMARY"
+
   docs:
     runs-on: ubuntu-latest
     steps:

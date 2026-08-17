@@ -60,6 +60,8 @@
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"fixtures": "node scripts/gen-fixtures.mjs",
+		"bench": "node bench/core.mjs",
+		"bench:camera": "node bench/camera.mjs",
 		"demo:build": "node scripts/build-demo.mjs",
 		"e2e": "playwright test",
 		"prepublishOnly": "pnpm build"

@@ -1,8 +1,11 @@
 /**
- * Bundle the demo into a single self-contained ESM file (demo/dist/demo.js) so
- * the demo directory is plain static HTML + one script, hostable anywhere with
+ * Bundle the demo into self-contained ESM files (demo/dist/*.js) so the demo
+ * directory is plain static HTML + one script per page, hostable anywhere with
  * no build step for the visitor. Inlines the library, @ngraveio/bc-ur, the QR
  * renderer, the jsqr fallback, and a Buffer polyfill (bc-ur is a Node-era pkg).
+ *
+ * Two pages: index.html (the demo) and bench.html (the real-device benchmark,
+ * the one measurement no headless run can produce).
  */
 import { build } from 'esbuild';
 import { dirname, join } from 'node:path';
@@ -12,8 +15,9 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..');
 
 await build({
-	entryPoints: [join(root, 'demo/src/main.js')],
-	outfile: join(root, 'demo/dist/demo.js'),
+	// Keyed so main.js keeps its published output name of demo.js.
+	entryPoints: { demo: join(root, 'demo/src/main.js'), bench: join(root, 'demo/src/bench.js') },
+	outdir: join(root, 'demo/dist'),
 	bundle: true,
 	format: 'esm',
 	platform: 'browser',
@@ -29,4 +33,4 @@ await build({
 	logLevel: 'info'
 });
 
-console.log('demo bundled -> demo/dist/demo.js');
+console.log('demo bundled -> demo/dist/demo.js and demo/dist/bench.js');
