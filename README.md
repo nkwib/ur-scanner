@@ -18,6 +18,8 @@ The [demo](demo/) is one static page that both **displays** an animated UR and *
 pnpm demo:build && node scripts/serve-demo.mjs   # http://localhost:4173
 ```
 
+Alongside it, [`demo/bench.html`](demo/bench.html) (hosted at <https://ur-scanner-docs.pages.dev/bench.html>) is the **real device benchmark**: decode attempts per second, median scan cost, and time to complete, measured through an actual lens. It is the one measurement headless CI cannot produce, and the only honest way to get numbers on Safari or Firefox on a phone, which is exactly where the `jsqr` fallback runs. See [benchmarking](docs/howto/benchmarking.md).
+
 ## Install
 
 ```bash

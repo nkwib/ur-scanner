@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "docs:gen": "node scripts/build-docs.mjs",
-    "dev": "pnpm docs:gen && vite dev",
-    "build": "pnpm -C .. install && pnpm -C .. build && pnpm docs:gen && vite build",
+    "dev": "pnpm -C .. demo:build && pnpm docs:gen && vite dev",
+    "build": "pnpm -C .. install && pnpm -C .. build && pnpm -C .. demo:build && pnpm docs:gen && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

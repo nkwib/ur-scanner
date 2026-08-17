@@ -30,7 +30,12 @@ The lens. There is no autofocus hunt, no motion blur, no exposure swing, no glar
 
 ## 3. The real device (`demo/bench.html`)
 
-The only place the lens exists. Serve the demo, open `/bench.html` on a phone, point it at the animated QR (this page renders one, so a laptop showing the same page works), and read measured decode attempts per second, median scan cost, time to complete, and the camera's actual delivered frame rate.
+The only place the lens exists. Two ways in, and they are the same page:
+
+- **Hosted:** <https://ur-scanner-docs.pages.dev/bench.html>. Nothing to install, which is the point, because the browsers whose numbers we most lack (Safari and Firefox on a phone, where the `jsqr` fallback runs) belong to people who are not going to clone a repo.
+- **Local:** `pnpm demo:build && node scripts/serve-demo.mjs`, then open `/bench.html` on a phone. Use this one when you are measuring an edit you just made.
+
+Point it at the animated QR (the page renders one, so a second device showing the same page works), and read measured decode attempts per second, median scan cost, time to complete, and the camera's actual delivered frame rate.
 
 The gap between delivered camera frames and scans that read a code is the interesting number: it is how much of the stream the physical channel is throwing away, and it is what the sender-side knobs in [physical tuning](tuning.md) move.
 

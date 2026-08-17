@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>@nkwib/ur-scanner — live demo</title>
+		<title>@nkwib/ur-scanner - live demo</title>
 		<style>
 			:root {
 				color-scheme: light dark;
@@ -128,12 +128,16 @@
 				font-size: 12px;
 				margin-top: 6px;
 			}
+			a {
+				color: var(--accent);
+			}
 		</style>
 	</head>
 	<body>
 		<header>
 			<h1>@nkwib/ur-scanner</h1>
 			<p>Open this page on a laptop and a phone. Point the phone at the laptop's QR.</p>
+			<p class="hint">Want numbers instead of vibes? <a href="./bench.html">Real device benchmark</a>: decode attempts per second and time to complete, measured on this phone.</p>
 		</header>
 		<div class="grid">
 			<section class="card">
@@ -146,7 +150,7 @@
 				<label>ECC level
 					<select id="ecc"><option>L</option><option selected>M</option><option>Q</option><option>H</option></select>
 				</label>
-				<p class="hint">Source fragments: <span id="frag-count">—</span> (the stream is rateless; it keeps emitting mixed frames)</p>
+				<p class="hint">Source fragments: <span id="frag-count">-</span> (the stream is rateless; it keeps emitting mixed frames)</p>
 				<div class="row">
 					<button id="encode">Encode &amp; play</button>
 					<button id="stop-display">Stop</button>

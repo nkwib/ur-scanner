@@ -195,6 +195,15 @@
       device, no camera needed. All decoding is local; no frame ever leaves this
       page.
     </p>
+    <p class="bench-note">
+      Want numbers rather than vibes? The
+      <a href="/bench.html">real device benchmark</a> reports measured decode
+      attempts per second, median scan cost, time to complete, and the camera's
+      actual delivered frame rate on the phone you are holding. That is the one
+      measurement headless CI cannot produce, and it matters most on Safari and
+      Firefox, where the <code>jsqr</code> fallback runs. See
+      <a href="/docs/howto/benchmarking">benchmarking</a> for how to read it.
+    </p>
     {#if insecure}
       <p class="warn-banner">
         This page is on an insecure origin, so the camera is disabled. Fixture
@@ -306,6 +315,12 @@
     border-radius: var(--r-md);
     padding: var(--sp-3) var(--sp-4);
     font-size: var(--fs-sm);
+  }
+
+  .bench-note {
+    color: var(--c-text-muted);
+    font-size: var(--fs-sm);
+    margin-top: var(--sp-3);
   }
 
   .warn-banner {

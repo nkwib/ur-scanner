@@ -296,6 +296,33 @@ if (existsSync(join(repoRoot, '.github/assets/demo.gif'))) {
   copyFileSync(join(repoRoot, '.github/assets/demo.gif'), join(assetsDir, 'demo.gif'));
 }
 
+/**
+ * Publish demo/bench.html at /bench.html as a plain static page.
+ *
+ * The real-device benchmark is the only measurement headless CI cannot produce,
+ * and the phones that need it most (Safari and Firefox, where the jsqr fallback
+ * lives) are exactly the ones that will not clone a repo and run a dev server.
+ * It ships verbatim rather than as a Svelte port: the copied layout mirrors the
+ * demo directory (bench.html next to dist/bench.js), so the page's own relative
+ * `./dist/bench.js` keeps working and the hosted page cannot drift from the one
+ * `node scripts/serve-demo.mjs` serves. Same URL in both places, too.
+ */
+const staticRoot = join(siteRoot, 'static');
+const benchSources = [
+  ['demo/bench.html', 'bench.html'],
+  ['demo/dist/bench.js', 'dist/bench.js'],
+  ['demo/dist/bench.js.map', 'dist/bench.js.map']
+];
+const missingBench = benchSources.filter(([src]) => !existsSync(join(repoRoot, src))).map(([src]) => src);
+if (missingBench.length) {
+  throw new Error(
+    `docs:gen  cannot publish the real-device benchmark page: missing ${missingBench.join(', ')}.\n` +
+      `  Run \`pnpm -C .. demo:build\` first (the docs-site \`dev\` and \`build\` scripts already do).`
+  );
+}
+mkdirSync(join(staticRoot, 'dist'), { recursive: true });
+for (const [src, dest] of benchSources) copyFileSync(join(repoRoot, src), join(staticRoot, dest));
+
 // docs.json: slug -> page (with prev/next for footer navigation).
 const docsOut = {};
 rendered.forEach((page, i) => {
@@ -325,3 +352,4 @@ writeFileSync(join(generatedDir, 'nav.json'), JSON.stringify(sections));
 
 console.log(`docs:gen  ${rendered.length} pages -> src/lib/generated/{docs,nav}.json`);
 console.log(`docs:gen  images copied: ${[...copiedImages].join(', ') || '(none in docs)'} + demo.png`);
+console.log('docs:gen  real-device benchmark published at /bench.html (from demo/bench.html)');

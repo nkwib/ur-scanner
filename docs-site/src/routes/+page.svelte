@@ -152,8 +152,13 @@
     <p>Open the demo on a laptop and your phone, point one at the other, and watch the ring fill. No second device? Fixture mode runs the whole pipeline on one screen.</p>
     <div class="cta center">
       <a class="btn primary big" href="/demo">Open the live demo →</a>
+      <a class="btn ghost big" href="/bench.html">Benchmark your device</a>
       <a class="btn ghost big" href="/docs/explanation/fountain-codes">The fountain-codes explainer</a>
     </div>
+    <p class="final-note">
+      The benchmark page measures decode attempts per second and time to complete on your own phone,
+      through your own lens. It is the number no headless run can give you.
+    </p>
   </div>
 </section>
 
@@ -597,5 +602,10 @@
     color: var(--c-text-muted);
     max-width: 40rem;
     margin: 0 auto var(--sp-5);
+  }
+
+  .final .final-note {
+    font-size: var(--fs-sm);
+    margin: var(--sp-5) auto 0;
   }
 </style>
