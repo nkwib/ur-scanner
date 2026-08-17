@@ -56,6 +56,7 @@ const DOCS = [
   { src: 'docs/howto/camera-selection-and-torch.md', slug: 'howto/camera-selection-and-torch', group: 'How-to', label: 'Camera & torch' },
   { src: 'docs/howto/tuning.md', slug: 'howto/tuning', group: 'How-to', label: 'Physical tuning' },
   { src: 'docs/howto/testing.md', slug: 'howto/testing', group: 'How-to', label: 'Testing (no camera)' },
+  { src: 'docs/howto/benchmarking.md', slug: 'howto/benchmarking', group: 'How-to', label: 'Benchmarking' },
   { src: 'docs/howto/wallet-payloads.md', slug: 'howto/wallet-payloads', group: 'How-to', label: 'Wallet payloads' },
   { src: 'docs/reference.md', slug: 'reference', group: 'Reference', label: 'API reference' },
   { src: 'docs/explanation/fountain-codes.md', slug: 'explanation/fountain-codes', group: 'Explanation', label: 'Fountain codes' },
