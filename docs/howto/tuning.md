@@ -25,7 +25,7 @@ Sender-side settings. "Verified" means we have run it in this library's parent a
 | E-ink or low-refresh sender | 30-40 B | 1-2 | H | slow refresh; keep parts tiny | community verification wanted |
 | Projector / across a room | 30-50 B | 3-4 | H | distance eats module resolution | community verification wanted |
 
-Receiver-side, this library defaults to `scanIntervalMs: 120` (about 8 decode attempts/sec), which pairs well with 4-8 fps senders. Raise it on slow devices.
+Receiver-side, this library scans once per delivered camera frame (roughly 30/sec on a phone), so it keeps up with any sender rate the camera itself can capture. Set `scanIntervalMs` to cap that if you would rather spend the battery elsewhere: at a 4-8 fps sender a 120 ms cap costs little, and above about 8 fps it becomes the limit instead of the sender. Before 0.2.0 that 120 ms cap was the default, which is why raising sender fps used to stop helping. See [benchmarking](benchmarking.md) for how to measure this on your own hardware.
 
 ## QR module density vs camera distance
 
@@ -52,6 +52,8 @@ Photographing one grid of pixels with another grid of sensor pixels produces moi
 ## Display fps vs camera fps beat effects
 
 Sender fps and camera capture fps are independent clocks. When they are close or share a simple ratio, they *beat*: the camera repeatedly samples the same part, or catches the display mid-refresh (a torn, half-old-half-new frame that decodes as garbage). This is why cranking sender fps does not linearly speed things up, and can slow them down. Practical rule: keep sender fps well below the camera's capture rate (most phone cameras preview at 30 fps, so 4 to 8 fps sender is safely clear), and if throughput plateaus, change the fps by a couple rather than pushing higher. Because the stream is fountain-coded, an occasional torn frame is simply ignored and the next clean part carries new information: see [fountain codes](../explanation/fountain-codes.md).
+
+A third clock used to make this worse: the receiver's own fixed scan timer. Sampling a changing signal on an unrelated fixed interval aliases against it, so some parts got decoded twice and others were never looked at. Scanning per delivered camera frame removes that clock, which is why the measured gain from removing it grows with sender fps: nothing at 6 fps, where the sender is the limit, and 6.9x at 30 fps.
 
 ## Contributing measurements
 

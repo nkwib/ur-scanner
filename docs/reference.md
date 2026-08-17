@@ -76,9 +76,20 @@ interface IgnoredFrame {
 
 ### `fromCamera(options?): Promise<CameraController>`
 
-`CameraSourceOptions` extends `URReceiverOptions` with: `video?: HTMLVideoElement`, `constraints?: MediaStreamConstraints` (default `{ video: { facingMode: 'environment' } }`), `receiver?: URReceiver`, `detector?: QRDetector`, `scanIntervalMs?: number` (default 120).
+`CameraSourceOptions` extends `URReceiverOptions` with:
 
-`CameraController`: `receiver`, `video`, `stop()`, `hasTorch()`, `torch(on)`, `listVideoInputs()`, `switchCamera(deviceId)`. See [camera selection and torch](howto/camera-selection-and-torch.md).
+| Option | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `video` | `HTMLVideoElement` | one is created | Caller-owned, so layout stays yours. |
+| `constraints` | `MediaStreamConstraints` | `{ video: { facingMode: 'environment' } }` | Passed straight to `getUserMedia`. |
+| `receiver` | `URReceiver` | a new one | Share it with a file-input fallback. |
+| `detector` | `QRDetector` | native, then `jsqr` | See the detector seam below. |
+| `scanIntervalMs` | `number` | none | Minimum ms between detect attempts. Unset scans every delivered camera frame. |
+| `fallbackMaxSize` | `number` | `960` | Long-edge cap before the `jsqr` fallback decodes. Ignored for native or explicit detectors. |
+
+The loop runs once per **delivered camera frame** via `requestVideoFrameCallback`, falling back to `requestAnimationFrame` capped at about 33 ms where that API is missing. Every frame the sender displays and the loop does not look at is payload thrown away, so the scan rate tracks the camera rather than a timer. Set `scanIntervalMs` to cap it for battery: it was 120 by default before 0.2.0, which limited the receiver to about 8 parts per second regardless of the sender.
+
+`CameraController`: `receiver`, `video`, `stop()`, `hasTorch()`, `torch(on)`, `listVideoInputs()`, `switchCamera(deviceId)`. See [camera selection and torch](howto/camera-selection-and-torch.md) and [benchmarking](howto/benchmarking.md).
 
 ### `fromImage(source, options?): Promise<{ receiver, progress, found }>`
 
@@ -91,9 +102,18 @@ Feed a `string[]` synchronously. `playFixture(parts, { intervalMs, loop, onFrame
 ## Detector seam
 
 - `nativeDetector(): QRDetector | null` : native `BarcodeDetector`, or `null` if absent.
-- `fallbackDetector(): Promise<QRDetector>` : lazily `import()`s `jsqr`; throws `DETECTOR_UNSUPPORTED` if not installed.
-- `resolveDetector(explicit?): Promise<QRDetector>` : explicit, then native, then fallback.
-- `interface QRDetector { detect(canvas: HTMLCanvasElement): Promise<DetectedCode[]> }` and `interface DetectedCode { rawValue: string }`.
+- `fallbackDetector(options?: { maxSize?: number }): Promise<QRDetector>` : lazily `import()`s `jsqr`; throws `DETECTOR_UNSUPPORTED` if not installed. `maxSize` caps the long edge before decoding.
+- `resolveDetector(explicit?, options?: { maxSize?: number }): Promise<QRDetector>` : explicit, then native, then fallback. `options` only reaches the fallback.
+
+```ts
+interface QRDetector {
+  detect(source: CanvasImageSource): Promise<DetectedCode[]>;
+  readonly acceptsVideo?: boolean;   // set it to be handed the <video> directly
+}
+interface DetectedCode { rawValue: string }
+```
+
+`detect` took an `HTMLCanvasElement` before 0.2.0. The widening is source compatible: a detector written against `HTMLCanvasElement` still compiles, and still receives a canvas. Set `acceptsVideo` to be handed the live `<video>` instead, which saves the camera loop a full-resolution copy per scan. Both built-in detectors set it.
 
 ## `<ur-scanner>` custom element
 
@@ -106,7 +126,7 @@ Register with `import '@nkwib/ur-scanner/element'` (or call `defineURScanner(tag
 | `auto-start` | boolean (presence) | Start on connect. |
 | `expected-type` | string | Forwarded to the receiver. |
 | `facing-mode` | `environment` \| `user` | Camera preference. |
-| `scan-interval` | number (ms) | Detect throttle. |
+| `scan-interval` | number (ms) | Cap on detect attempts. Unset scans every delivered camera frame. |
 | `fixture` | JSON `string[]` | One-device / demo mode: play these parts instead of the camera. |
 
 ### Methods, events, CSS parts

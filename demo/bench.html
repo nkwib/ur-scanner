@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>@nkwib/ur-scanner - real device benchmark</title>
+		<style>
+			:root {
+				color-scheme: light dark;
+				--bg: #0b0f14;
+				--card: #151b23;
+				--fg: #e6edf3;
+				--muted: #9aa7b4;
+				--accent: #4ade80;
+			}
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				margin: 0;
+				font: 15px/1.5 system-ui, sans-serif;
+				background: var(--bg);
+				color: var(--fg);
+			}
+			header {
+				padding: 20px;
+				text-align: center;
+			}
+			header h1 {
+				margin: 0 0 4px;
+				font-size: 20px;
+			}
+			header p {
+				margin: 0;
+				color: var(--muted);
+			}
+			.grid {
+				display: grid;
+				gap: 16px;
+				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+				max-width: 900px;
+				margin: 0 auto;
+				padding: 0 16px 40px;
+			}
+			.card {
+				background: var(--card);
+				border: 1px solid #2a333d;
+				border-radius: 14px;
+				padding: 16px;
+			}
+			.card h2 {
+				margin: 0 0 12px;
+				font-size: 15px;
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+				color: var(--muted);
+			}
+			canvas {
+				width: 100%;
+				max-width: 320px;
+				image-rendering: pixelated;
+				background: #fff;
+				border-radius: 8px;
+				display: block;
+				margin: 0 auto;
+			}
+			video {
+				width: 100%;
+				border-radius: 8px;
+				background: #000;
+				aspect-ratio: 4 / 3;
+				object-fit: cover;
+			}
+			label {
+				display: flex;
+				justify-content: space-between;
+				gap: 8px;
+				align-items: center;
+				margin: 8px 0;
+				color: var(--muted);
+				font-size: 13px;
+			}
+			input,
+			select,
+			button {
+				font: inherit;
+				color: inherit;
+				background: #0e141b;
+				border: 1px solid #2a333d;
+				border-radius: 8px;
+				padding: 7px 10px;
+			}
+			button {
+				cursor: pointer;
+				background: #1f2933;
+			}
+			button:hover {
+				border-color: var(--accent);
+			}
+			.row {
+				display: flex;
+				gap: 8px;
+				flex-wrap: wrap;
+				margin-top: 10px;
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-top: 10px;
+				font-size: 13px;
+			}
+			th,
+			td {
+				text-align: left;
+				padding: 5px 6px;
+				border-bottom: 1px solid #2a333d;
+			}
+			th {
+				color: var(--muted);
+				font-weight: 500;
+			}
+			td.num {
+				font-family: ui-monospace, monospace;
+				text-align: right;
+			}
+			.hint {
+				color: var(--muted);
+				font-size: 12px;
+				margin-top: 6px;
+			}
+			#env {
+				font-family: ui-monospace, monospace;
+				font-size: 12px;
+				color: var(--muted);
+				white-space: pre-wrap;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1>Real device benchmark</h1>
+			<p>Headless CI can measure everything except the lens. This page measures the lens.</p>
+		</header>
+		<div class="grid">
+			<section class="card">
+				<h2>1 &middot; Show this on another screen</h2>
+				<canvas id="qr" width="320" height="320"></canvas>
+				<p class="hint" id="part-label"></p>
+				<label>Payload size (bytes) <input id="size" type="number" value="2048" min="128" max="20000" /></label>
+				<label>Fragment size (bytes) <input id="fragment" type="number" value="100" min="10" max="400" /></label>
+				<label>Display fps <input id="fps" type="number" value="10" min="1" max="30" /></label>
+				<label>ECC level
+					<select id="ecc"><option>L</option><option selected>M</option><option>Q</option><option>H</option></select>
+				</label>
+				<p class="hint">Source fragments: <span id="frag-count">-</span></p>
+				<div class="row">
+					<button id="play">Play</button>
+					<button id="stop-display">Stop</button>
+				</div>
+			</section>
+
+			<section class="card">
+				<h2>2 &middot; Point this device at it</h2>
+				<video id="video" playsinline muted></video>
+				<div class="row">
+					<button id="start">Start scan</button>
+					<button id="stop">Stop</button>
+				</div>
+				<table>
+					<tbody>
+						<tr><th>Time to complete</th><td class="num" id="m-time">-</td></tr>
+						<tr><th>Decode attempts / sec</th><td class="num" id="m-fps">-</td></tr>
+						<tr><th>Median scan cost</th><td class="num" id="m-scan">-</td></tr>
+						<tr><th>Parts recovered</th><td class="num" id="m-parts">-</td></tr>
+						<tr><th>Scans that read a code</th><td class="num" id="m-hits">-</td></tr>
+						<tr><th>Camera frames delivered</th><td class="num" id="m-frames">-</td></tr>
+					</tbody>
+				</table>
+				<p class="hint" id="status">Idle</p>
+				<p class="hint">Nothing is uploaded. Copy the numbers into a compat.md row if you want to contribute them.</p>
+			</section>
+
+			<section class="card">
+				<h2>Environment</h2>
+				<p id="env">-</p>
+			</section>
+		</div>
+		<script type="module" src="./dist/bench.js"></script>
+	</body>
+</html>

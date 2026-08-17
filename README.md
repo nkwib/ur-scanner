@@ -90,7 +90,7 @@ Any sender built on `@ngraveio/bc-ur` (`UREncoder`) or another spec-compliant UR
 
 - Tutorial: [from zero to scanned bytes](docs/tutorial.md)
 - Explanation: [fountain codes](docs/explanation/fountain-codes.md) · [architecture](docs/explanation/architecture.md)
-- How-to: [frameworks](docs/howto/frameworks.md) · [file and image input](docs/howto/file-and-image-input.md) · [camera selection and torch](docs/howto/camera-selection-and-torch.md) · [physical tuning](docs/howto/tuning.md) · [testing without a camera](docs/howto/testing.md) · [wallet payloads](docs/howto/wallet-payloads.md)
+- How-to: [frameworks](docs/howto/frameworks.md) · [file and image input](docs/howto/file-and-image-input.md) · [camera selection and torch](docs/howto/camera-selection-and-torch.md) · [physical tuning](docs/howto/tuning.md) · [testing without a camera](docs/howto/testing.md) · [benchmarking](docs/howto/benchmarking.md) · [wallet payloads](docs/howto/wallet-payloads.md)
 - Reference: [full API, `<ur-scanner>` attributes/events, error taxonomy](docs/reference.md)
 - Interop: [compatibility matrix](docs/compat.md)
 
