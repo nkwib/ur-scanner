@@ -30,7 +30,7 @@ The decode core is verified against `@ngraveio/bc-ur`'s own `UREncoder`. Physica
 
 ## How to add a row
 
-1. Run the [demo](../demo/) (two-device mode) or your own integration against the target. For numbers rather than a yes/no, run the [real device benchmark](https://ur-scanner-docs.pages.dev/bench.html): it reports decode attempts per second and time to complete on that device, and uploads nothing.
+1. Run the [demo](../demo/) (two-device mode) or your own integration against the target. For numbers rather than a yes/no, run the [real device benchmark](https://ur-scanner.pages.dev/bench.html): it reports decode attempts per second and time to complete on that device, and uploads nothing.
 2. Note browser + version, device, and, for senders, the fragment size / fps / ECC that worked.
 3. Edit the relevant table: set "Works" honestly (yes / no / partial) and put your GitHub handle + date in "Verified by".
 4. Open a PR. Even a "no, fails like this" row is valuable.

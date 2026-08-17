@@ -47,7 +47,7 @@
     <aside class="shot">
       <div class="shot-chrome">
         <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span class="url">ur-scanner-docs.pages.dev/demo</span>
+        <span class="url">ur-scanner.pages.dev/demo</span>
       </div>
       <div class="shot-body">
         <img src="/assets/demo.gif" alt="Animated demo: the sender cycles fountain-coded QR frames while the receiver ring fills and 156 bytes decode." width="820" height="623" />
