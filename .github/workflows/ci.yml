@@ -36,12 +36,13 @@ jobs:
           node-version: 22
       - run: pnpm install
       - run: pnpm exec playwright install --with-deps chromium
+      # tee, so the numbers are readable in the job log as well as the summary.
       - name: Decode core
         run: |
           {
             echo '## Decode core'
-            pnpm bench
-          } >> "$GITHUB_STEP_SUMMARY"
+            pnpm --silent bench
+          } | tee -a "$GITHUB_STEP_SUMMARY"
       # Chromium on Linux ships no BarcodeDetector, so this measures the jsqr
       # fallback path. The native path is measured on a machine that has one.
       - name: Camera loop (fake camera device)
@@ -51,8 +52,8 @@ jobs:
         run: |
           {
             echo '## Camera loop'
-            pnpm bench:camera
-          } >> "$GITHUB_STEP_SUMMARY"
+            pnpm --silent bench:camera
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
   docs:
     runs-on: ubuntu-latest

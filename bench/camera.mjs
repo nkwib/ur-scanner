@@ -97,7 +97,7 @@ function medianRun(runs) {
 	return { ...sorted[sorted.length >> 1], repeats: runs.length, completed: ok.length };
 }
 
-const results = { camera: {}, senders: [], stages: null, env: null };
+const results = { camera: {}, senders: [], framings: [], env: null };
 
 for (const sender of SENDERS) {
 	const path = join(TMP, `sender-${sender.hold}.y4m`);
@@ -154,7 +154,6 @@ results.canvasCostThrottled = await withCamera(
  * framing, one at the floor, and one 1080p framing (what a phone camera
  * actually hands you) bracket the decision.
  */
-results.framings = [];
 for (const framing of [
 	{ label: '720p, generous framing', width: 1280, height: 720, fill: 0.45 },
 	{ label: '720p, tight framing', width: 1280, height: 720, fill: 0.28 },
