@@ -32,7 +32,7 @@ The lens. There is no autofocus hunt, no motion blur, no exposure swing, no glar
 
 The only place the lens exists. Two ways in, and they are the same page:
 
-- **Hosted:** <https://ur-scanner-docs.pages.dev/bench.html>. Nothing to install, which is the point, because the browsers whose numbers we most lack (Safari and Firefox on a phone, where the `jsqr` fallback runs) belong to people who are not going to clone a repo.
+- **Hosted:** <https://ur-scanner.pages.dev/bench.html>. Nothing to install, which is the point, because the browsers whose numbers we most lack (Safari and Firefox on a phone, where the `jsqr` fallback runs) belong to people who are not going to clone a repo.
 - **Local:** `pnpm demo:build && node scripts/serve-demo.mjs`, then open `/bench.html` on a phone. Use this one when you are measuring an edit you just made.
 
 Point it at the animated QR (the page renders one, so a second device showing the same page works), and read measured decode attempts per second, median scan cost, time to complete, and the camera's actual delivered frame rate.
