@@ -1,5 +1,5 @@
 /**
- * docs:gen — the single-source-of-truth markdown pipeline.
+ * docs:gen: the single-source-of-truth markdown pipeline.
  *
  * The repo's own docs/*.md and README are the ONLY place doc content lives. This
  * script transforms them into routed pages at build time; editing docs/*.md is
@@ -14,8 +14,14 @@
  * ```mermaid``` fences emitted as theme-aware client-rendered blocks, relative
  * inter-doc links rewritten to site routes, images copied into static/, and any
  * other repo-file link falling back to a GitHub blob/tree URL.
+ *
+ * Two build-time guards make the registry below impossible to forget (see
+ * `assertDocCoverage` and `linkErrors`). Adding docs/foo.md without a DOCS entry
+ * is a hard failure, not a page that silently never exists, and an inter-doc
+ * link that would fall through to a GitHub URL is a hard failure too. Both run
+ * in CI's `docs` job, which builds this site on every pull request.
  */
-import { mkdirSync, writeFileSync, readFileSync, copyFileSync, existsSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, copyFileSync, existsSync, readdirSync } from 'node:fs';
 import { dirname, join, extname } from 'node:path';
 import { posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -56,6 +62,7 @@ const DOCS = [
   { src: 'docs/howto/camera-selection-and-torch.md', slug: 'howto/camera-selection-and-torch', group: 'How-to', label: 'Camera & torch' },
   { src: 'docs/howto/tuning.md', slug: 'howto/tuning', group: 'How-to', label: 'Physical tuning' },
   { src: 'docs/howto/testing.md', slug: 'howto/testing', group: 'How-to', label: 'Testing (no camera)' },
+  { src: 'docs/howto/benchmarking.md', slug: 'howto/benchmarking', group: 'How-to', label: 'Benchmarking' },
   { src: 'docs/howto/wallet-payloads.md', slug: 'howto/wallet-payloads', group: 'How-to', label: 'Wallet payloads' },
   { src: 'docs/reference.md', slug: 'reference', group: 'Reference', label: 'API reference' },
   { src: 'docs/explanation/fountain-codes.md', slug: 'explanation/fountain-codes', group: 'Explanation', label: 'Fountain codes' },
@@ -63,8 +70,73 @@ const DOCS = [
   { src: 'docs/compat.md', slug: 'compat', group: 'Compatibility', label: 'Compatibility' }
 ];
 
+/**
+ * Markdown under docs/ that deliberately gets no site page. Every entry needs a
+ * reason, and the reason is the point: an unlisted, unregistered file is a bug
+ * (that is exactly how docs/howto/benchmarking.md shipped as a dead link), so
+ * the only way past the guard is to say out loud that you meant it.
+ *
+ * Exempting a doc does not license links to it: a routed page linking here is
+ * still an error, because a reader clicking it would be thrown off the site.
+ * If a doc is worth linking from the site, route it.
+ */
+const UNROUTED = [
+  // e.g. { src: 'docs/internal/notes.md', reason: 'maintainer scratch, not for the site' }
+];
+
 /** repo path (normalized, .md) -> site slug, for inter-doc link rewriting. */
 const pathToSlug = new Map(DOCS.map((d) => [posix.normalize(d.src), d.slug]));
+const unroutedPaths = new Set(UNROUTED.map((d) => posix.normalize(d.src)));
+
+/** Every .md under a directory, repo-relative and posix-normalized. */
+function markdownUnder(repoRelDir) {
+  const out = [];
+  const walk = (rel) => {
+    for (const entry of readdirSync(join(repoRoot, rel), { withFileTypes: true })) {
+      const child = posix.join(rel, entry.name);
+      if (entry.isDirectory()) walk(child);
+      else if (entry.name.endsWith('.md')) out.push(child);
+    }
+  };
+  walk(repoRelDir);
+  return out.sort();
+}
+
+/**
+ * Guard 1: docs/**\/*.md is registered in DOCS or listed in UNROUTED, and every
+ * DOCS entry points at a file that exists. Fails the build, loudly, with the
+ * exact line to add.
+ */
+function assertDocCoverage() {
+  const problems = [];
+
+  for (const doc of DOCS) {
+    if (!existsSync(join(repoRoot, doc.src))) problems.push(`DOCS entry "${doc.src}" (slug ${doc.slug}) does not exist on disk.`);
+  }
+  for (const doc of UNROUTED) {
+    if (!doc.reason) problems.push(`UNROUTED entry "${doc.src}" needs a reason.`);
+    if (!existsSync(join(repoRoot, doc.src))) problems.push(`UNROUTED entry "${doc.src}" does not exist on disk.`);
+  }
+  for (const src of markdownUnder('docs')) {
+    if (pathToSlug.has(src) || unroutedPaths.has(src)) continue;
+    const slug = src.replace(/^docs\//, '').replace(/\.md$/, '');
+    problems.push(
+      `"${src}" is not registered, so the site would never serve it and every link to it would silently become a GitHub URL.\n` +
+        `      Add it to DOCS in this file, e.g.\n` +
+        `        { src: '${src}', slug: '${slug}', group: 'How-to', label: 'TODO' }\n` +
+        `      or, if it genuinely should have no page, add it to UNROUTED with a reason.`
+    );
+  }
+
+  if (problems.length) {
+    throw new Error(`docs:gen  doc registry is out of date:\n${problems.map((p) => `  - ${p}`).join('\n')}`);
+  }
+}
+
+assertDocCoverage();
+
+/** Guard 2: collected while rendering, thrown before anything is written. */
+const linkErrors = [];
 
 const escapeHtml = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -91,21 +163,38 @@ function resolveImage(srcRef, docDir) {
   return `/assets/${base}`;
 }
 
-/** Turn a repo-relative link into a site route (if it targets a doc) or a GitHub URL. */
-function resolveLink(href, docDir) {
+/**
+ * Turn a repo-relative link into a site route (if it targets a doc) or a GitHub URL.
+ *
+ * The GitHub fallback is for links that legitimately leave the site (source
+ * files, examples/, CONTRIBUTING.md). It must never swallow a link to a doc that
+ * simply is not routed yet, so those, and links to files that do not exist at
+ * all, are recorded in `linkErrors` and fail the build.
+ */
+function resolveLink(href, docDir, docSrc) {
   if (/^(https?:)?\/\//.test(href) || /^(mailto:|tel:)/.test(href) || href.startsWith('#')) return null;
   const [pathPart, hash] = href.split('#');
   const hashSuffix = hash ? `#${hash}` : '';
   const repoRel = posix.normalize(posix.join(docDir, pathPart));
   if (pathToSlug.has(repoRel)) return `/docs/${pathToSlug.get(repoRel)}${hashSuffix}`;
-  // Not a doc page: fall back to GitHub. Directories -> /tree, files -> /blob.
+
   const trimmed = repoRel.replace(/\/$/, '');
+  if (!existsSync(join(repoRoot, trimmed))) {
+    linkErrors.push(`${docSrc}: "${href}" resolves to "${trimmed}", which does not exist in the repo.`);
+  } else if (trimmed.startsWith('docs/') && trimmed.endsWith('.md')) {
+    linkErrors.push(
+      `${docSrc}: "${href}" points at the doc "${trimmed}", which has no site route, so it would silently ` +
+        `become a GitHub blob URL and send the reader off the site. Register "${trimmed}" in DOCS, or drop the link.`
+    );
+  }
+
+  // Not a doc page: fall back to GitHub. Directories -> /tree, files -> /blob.
   const kind = pathPart.endsWith('/') || extname(trimmed) === '' ? 'tree' : 'blob';
   return `${REPO_URL}/${kind}/${REPO_BRANCH}/${trimmed}${hashSuffix}`;
 }
 
 /** rehype transformer: heading ids, code/mermaid, links, images. */
-function transform(docDir) {
+function transform(docDir, docSrc) {
   return (tree) => {
     const slugger = new GithubSlugger();
 
@@ -136,7 +225,7 @@ function transform(docDir) {
 
       // Links: rewrite relative repo links; harden external ones.
       if (node.tagName === 'a' && typeof node.properties?.href === 'string') {
-        const rewritten = resolveLink(node.properties.href, docDir);
+        const rewritten = resolveLink(node.properties.href, docDir, docSrc);
         if (rewritten) node.properties.href = rewritten;
         if (/^https?:\/\//.test(node.properties.href)) {
           node.properties.target = '_blank';
@@ -183,7 +272,7 @@ async function renderDoc(doc) {
     .use(remarkGfm)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
-    .use(() => transform(docDir))
+    .use(() => transform(docDir, doc.src))
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(markdown);
 
@@ -194,6 +283,10 @@ async function renderDoc(doc) {
 const rendered = [];
 for (const doc of DOCS) rendered.push(await renderDoc(doc));
 
+if (linkErrors.length) {
+  throw new Error(`docs:gen  ${linkErrors.length} unroutable in-repo link(s):\n${linkErrors.map((e) => `  - ${e}`).join('\n')}`);
+}
+
 // Landing + README parity: always make the demo screenshot available.
 if (existsSync(join(repoRoot, 'docs/assets/demo.png'))) {
   copyFileSync(join(repoRoot, 'docs/assets/demo.png'), join(assetsDir, 'demo.png'));
@@ -202,6 +295,33 @@ if (existsSync(join(repoRoot, 'docs/assets/demo.png'))) {
 if (existsSync(join(repoRoot, '.github/assets/demo.gif'))) {
   copyFileSync(join(repoRoot, '.github/assets/demo.gif'), join(assetsDir, 'demo.gif'));
 }
+
+/**
+ * Publish demo/bench.html at /bench.html as a plain static page.
+ *
+ * The real-device benchmark is the only measurement headless CI cannot produce,
+ * and the phones that need it most (Safari and Firefox, where the jsqr fallback
+ * lives) are exactly the ones that will not clone a repo and run a dev server.
+ * It ships verbatim rather than as a Svelte port: the copied layout mirrors the
+ * demo directory (bench.html next to dist/bench.js), so the page's own relative
+ * `./dist/bench.js` keeps working and the hosted page cannot drift from the one
+ * `node scripts/serve-demo.mjs` serves. Same URL in both places, too.
+ */
+const staticRoot = join(siteRoot, 'static');
+const benchSources = [
+  ['demo/bench.html', 'bench.html'],
+  ['demo/dist/bench.js', 'dist/bench.js'],
+  ['demo/dist/bench.js.map', 'dist/bench.js.map']
+];
+const missingBench = benchSources.filter(([src]) => !existsSync(join(repoRoot, src))).map(([src]) => src);
+if (missingBench.length) {
+  throw new Error(
+    `docs:gen  cannot publish the real-device benchmark page: missing ${missingBench.join(', ')}.\n` +
+      `  Run \`pnpm -C .. demo:build\` first (the docs-site \`dev\` and \`build\` scripts already do).`
+  );
+}
+mkdirSync(join(staticRoot, 'dist'), { recursive: true });
+for (const [src, dest] of benchSources) copyFileSync(join(repoRoot, src), join(staticRoot, dest));
 
 // docs.json: slug -> page (with prev/next for footer navigation).
 const docsOut = {};
@@ -232,3 +352,4 @@ writeFileSync(join(generatedDir, 'nav.json'), JSON.stringify(sections));
 
 console.log(`docs:gen  ${rendered.length} pages -> src/lib/generated/{docs,nav}.json`);
 console.log(`docs:gen  images copied: ${[...copiedImages].join(', ') || '(none in docs)'} + demo.png`);
+console.log('docs:gen  real-device benchmark published at /bench.html (from demo/bench.html)');

@@ -128,6 +128,9 @@
 				font-size: 12px;
 				margin-top: 6px;
 			}
+			a {
+				color: var(--accent);
+			}
 			#env {
 				font-family: ui-monospace, monospace;
 				font-size: 12px;
@@ -140,6 +143,9 @@
 		<header>
 			<h1>Real device benchmark</h1>
 			<p>Headless CI can measure everything except the lens. This page measures the lens.</p>
+			<!-- Relative on purpose: this page is served both from demo/ and from the
+			     docs site root, and "./" is the right way home in both. -->
+			<p class="hint">Just want to see it work? <a href="./">Back to ur-scanner</a>.</p>
 		</header>
 		<div class="grid">
 			<section class="card">

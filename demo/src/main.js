@@ -66,7 +66,7 @@ scanner.addEventListener('ur-complete', (e) => {
 	} catch {
 		text = '(binary payload)';
 	}
-	$('rx-status').textContent = `Done — ${ur.cbor.length} bytes, type "${ur.type}"${ur.wasSinglePart ? ' (single-part; a static QR would have done)' : ''}`;
+	$('rx-status').textContent = `Done: ${ur.cbor.length} bytes, type "${ur.type}"${ur.wasSinglePart ? ' (single-part; a static QR would have done)' : ''}`;
 	$('rx-out').textContent = text;
 	$('rx-out').hidden = false;
 });
