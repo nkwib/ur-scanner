@@ -58,10 +58,23 @@ expect(found).toEqual([parts.parts[0]]);
 
 The pluggable detector is the reason the camera and image sources are testable at all: `resolveDetector` prefers whatever you pass in.
 
+## A fake camera device, for the camera path itself
+
+Stub detectors skip pixels, which is the point, but they also skip the camera. Chromium will play a raw Y4M file back as a real capture device, which covers the rest:
+
+```bash
+chromium --use-fake-device-for-media-stream \
+         --use-file-for-fake-video-capture=animated-qr.y4m
+```
+
+`getUserMedia` then returns a genuine `MediaStream` of your own animated QR frames, and the whole loop runs: video, detector, receiver, bytes. This package renders that file with `bench/lib/y4m.mjs` and wires the flags in `playwright.config.ts`, so `tests/e2e/camera.spec.ts` decodes a UR through the camera path with no hardware. Copy the pattern if your app has camera logic of its own.
+
+Hold each part for several frames of the file (a 30 fps file with each part held 5 frames is a 6 fps sender seen by a 30 fps camera): a real camera sees the same displayed frame several times, and a fixture that changes every frame hides scheduling bugs.
+
 ## How this package is wired (copy it)
 
 - **vitest**, node environment for the pure core (`tests/*.test.ts`), jsdom for DOM specs (`tests/*.dom.test.ts`).
-- **Playwright** drives the real demo in Chromium (`tests/e2e/demo.spec.ts`): it clicks **Simulate**, which encodes with bc-ur and feeds the element's `fixture` attribute, then asserts the decoded text appears. That is a full encode -> element -> decode round-trip with no camera.
+- **Playwright** drives the real demo in Chromium (`tests/e2e/demo.spec.ts`): it clicks **Simulate**, which encodes with bc-ur and feeds the element's `fixture` attribute, then asserts the decoded text appears. That is a full encode -> element -> decode round-trip with no camera. `tests/e2e/camera.spec.ts` adds the fake-camera path above.
 
 ## Downstream apps
 

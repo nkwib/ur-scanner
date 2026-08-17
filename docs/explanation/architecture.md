@@ -44,11 +44,13 @@ What it does **not** own: the fountain math and UR parsing. Those belong upstrea
 
 Each source's only job is to produce strings and hand them to a `URReceiver`.
 
-- **`fromCamera`** opens a `getUserMedia` stream, draws frames to an offscreen canvas on a throttled loop, and runs the detector. Returns a controller (`stop`, `torch`, `listVideoInputs`, `switchCamera`).
+- **`fromCamera`** opens a `getUserMedia` stream and runs the detector once per delivered camera frame (`requestVideoFrameCallback`, with a capped `requestAnimationFrame` fallback). Returns a controller (`stop`, `torch`, `listVideoInputs`, `switchCamera`).
 - **`fromImage`** paints one still (a `Blob`, `File`, `ImageBitmap`, `<img>`, or URL) to a canvas and detects every code in it: the no-camera path for screenshots and uploads.
 - **`fromFixture` / `playFixture`** feed a known `string[]`: the camera-free path for tests, CI, and the demo's one-device mode.
 
 The **`QRDetector` seam** decouples "pixels to strings" from any specific engine. Resolution order is explicit-then-native-then-lazy-fallback: a detector you pass wins (tests inject a stub), otherwise the native `BarcodeDetector`, otherwise a dynamically `import()`ed `jsqr`. Keeping `jsqr` lazy is what keeps the core dependency-light.
+
+The seam takes a `CanvasImageSource`, and a detector says via `acceptsVideo` whether it can read a live `<video>`. Both built-ins can, so the camera loop hands them the video and never allocates a canvas; each detector then does the minimum pixel plumbing it needs (the native one none at all, `jsqr` one downscaling copy). A detector that does not set the flag is handed a painted canvas, which is what every detector got before 0.2.0.
 
 ## Layer 3: `<ur-scanner>`, the optional UI
 

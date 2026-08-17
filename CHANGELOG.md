@@ -4,6 +4,23 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Changed
+
+- **The camera loop scans once per delivered camera frame** instead of on a fixed 120 ms timer, using `requestVideoFrameCallback` where available and `requestAnimationFrame` (capped at ~33 ms) where it is not. Animated QR is a throughput problem, and a fixed interval capped the receiver at about 8 parts per second no matter how fast the sender ran. Measured against a fake camera device: a 30 fps sender went from 2926 ms to 426 ms (6.9x), a 15 fps sender from 2003 ms to 760 ms (2.6x), a 6 fps sender is unchanged because the sender, not the loop, is the limit there. `scanIntervalMs` still works and still means "at most this often"; it is simply no longer the default bottleneck. Set it if you want the old behaviour or want to trade throughput for battery.
+- **The `jsqr` fallback decodes at a capped resolution** (960 px on the long edge by default, tunable with the new `fallbackMaxSize` option). `jsqr` walks every pixel on the main thread, so this is about 2x faster on 1080p frames with no measured loss of decodability, including on a code framed tightly enough to sit at the 2 camera-pixels-per-module floor, where a 640 px cap fails to decode at all. End to end on the fallback path, a 30 fps sender went from 3436 ms to 422 ms.
+- **`QRDetector.detect` now takes a `CanvasImageSource`** rather than an `HTMLCanvasElement`. This is a widening: detectors written against `HTMLCanvasElement` keep compiling and keep being handed a canvas. A detector can opt in to receiving the live `<video>` by setting the new optional `acceptsVideo` flag, which is what the built-in native and `jsqr` detectors now do, removing one full-resolution canvas copy per scan from the camera path.
+- `fallbackDetector(options?)` and `resolveDetector(explicit?, options?)` take an optional `{ maxSize }`. Both remain backwards compatible when called with no options.
+
+### Added
+
+- `bench/`: three benchmarks, run with `pnpm bench` (the decode core, in Node) and `pnpm bench:camera` (the camera loop in headless Chromium, driven by a generated Y4M file as a fake capture device), plus `demo/bench.html` for the numbers only a real device and a real lens can produce. CI publishes the headless results to the run summary.
+- Playwright now covers the camera path end to end (`getUserMedia` to bytes) against that fake camera device.
+- Tests proving URs decode regardless of case, including uppercase (what a spec-correct sender emits so the QR can use alphanumeric mode) and mixed case, across the multipart sequence header, `expectedType` matching, and duplicate detection.
+
+### Fixed
+
+- The camera loop no longer reassigns `canvas.width` / `canvas.height` on every scan, which dropped the backing store and reset context state each time. It now resizes only when the camera's dimensions change, and only for detectors that need a canvas at all.
+
 ## [0.1.0] - unreleased
 
 Initial release: a framework-agnostic browser receiver for animated BC-UR QR codes.
