@@ -1,4 +1,4 @@
-/* Code block (mdsvex / prism) — uses our color tokens. */
+/* Code block (mdsvex / prism): uses our color tokens. */
 pre.code-block {
   position: relative;
   background: var(--c-code-bg);
@@ -124,7 +124,7 @@ pre.code-block[data-lang='plain']::before {
   cursor: help;
 }
 
-/* Diff language — only the line wrappers (`*-sign`) get the band, never the
+/* Diff language: only the line wrappers (`*-sign`) get the band, never the
    inline `prefix` spans, otherwise the `-` / `+` would steal the whole line. */
 pre[class*='language-diff'] .token.deleted-sign {
   background: var(--c-accent-soft);

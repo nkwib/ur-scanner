@@ -38,13 +38,18 @@ if (cam.hasTorch()) {
 
 `torch(on)` is a no-op where unsupported, so it is safe to call blind. The torch capability lives on the active `MediaStreamTrack`; switching cameras can change whether it exists, so re-check `hasTorch()` after `switchCamera`.
 
-## Detection throttle
+## Detection rate
 
-The detect loop runs on `requestAnimationFrame` but only *attempts* a decode every `scanIntervalMs` (default 120ms, about 8/s). Decoding every animation frame wastes battery and can actually lower throughput on a busy main thread. Raise the interval on low-end devices; lower it if you have CPU to spare and want faster locks. See the beat-frequency note in [tuning](tuning.md).
+The detect loop attempts a decode once per **delivered camera frame**, using `requestVideoFrameCallback` where the browser has it and `requestAnimationFrame` capped at about 33 ms where it does not. There is no default throttle: a frame the sender displayed and the loop never looked at is payload thrown away, so the scan rate tracks the camera instead of a timer. Because the detect call is awaited before the next frame is requested, a slow detector paces itself rather than queueing work.
+
+`scanIntervalMs` is still available as an explicit cap ("at most this often") if you would rather spend the battery elsewhere. It has no default; before 0.2.0 it defaulted to 120 ms, which held the receiver to about 8 decode attempts per second regardless of how fast the sender ran. See the beat-frequency note in [tuning](tuning.md), and [benchmarking](benchmarking.md) for how to measure the rate on your own hardware.
 
 ## With the web component
 
 ```html
+<ur-scanner auto-start facing-mode="environment"></ur-scanner>
+
+<!-- ...or, only if you want the battery cap from above: -->
 <ur-scanner auto-start facing-mode="environment" scan-interval="150"></ur-scanner>
 ```
 
