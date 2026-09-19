@@ -20,6 +20,7 @@ All notable changes to this project are documented here. The format follows [Kee
 ### Fixed
 
 - The camera loop no longer reassigns `canvas.width` / `canvas.height` on every scan, which dropped the backing store and reset context state each time. It now resizes only when the camera's dimensions change, and only for detectors that need a canvas at all.
+- `URReceiver` no longer re-submits an exact duplicate frame to `@ngraveio/bc-ur`. Its part counter has no duplicate detection of its own (see ngraveio/bc-ur#4), so a camera lingering on one frame inflated `estimatedPercent` past the true fraction of unique parts recovered.
 
 ## [0.1.0] - unreleased
 
