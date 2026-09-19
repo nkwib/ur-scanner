@@ -65,6 +65,14 @@ describe('URReceiver decode core', () => {
 		expect(ignored).toContain('duplicate');
 	});
 
+	it('does not let a re-scanned duplicate frame inflate estimatedPercent', () => {
+		const rx = new URReceiver();
+		rx.addPart(multi.parts[0]!);
+		const afterDup = rx.addPart(multi.parts[0]!);
+		const uniqueFraction = afterDup.receivedParts / afterDup.expectedPartCount;
+		expect(afterDup.estimatedPercent).toBeLessThanOrEqual(uniqueFraction);
+	});
+
 	it('ignores non-UR noise but still completes', () => {
 		const rx = new URReceiver();
 		const reasons: string[] = [];

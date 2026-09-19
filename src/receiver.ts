@@ -36,6 +36,7 @@ export class URReceiver extends Emitter<URReceiverEvents> {
 	private completed = false;
 	private failed = false;
 	private lastReceivedCount = 0;
+	private seenFrames = new Set<string>();
 	private stallTimer: ReturnType<typeof setTimeout> | null = null;
 
 	constructor(options: URReceiverOptions = {}) {
@@ -106,13 +107,25 @@ export class URReceiver extends Emitter<URReceiverEvents> {
 			return this.snapshot();
 		}
 
+		// bc-ur's own part counter (which feeds estimatedPercentComplete) has no
+		// duplicate detection of its own: re-submitting an already-accepted fragment
+		// still bumps it, so a camera lingering on one frame inflates progress. Skip
+		// the re-submission for an exact repeat instead of letting bc-ur count it.
+		const normalized = raw.toLowerCase();
+		const isRepeat = this.seenFrames.has(normalized);
+
 		let accepted: boolean;
-		try {
-			accepted = this.decoder.receivePart(raw);
-		} catch (err) {
-			this.ignore({ reason: 'malformed', text: raw, seenType: partType });
-			void err;
-			return this.snapshot();
+		if (isRepeat) {
+			accepted = true;
+		} else {
+			try {
+				accepted = this.decoder.receivePart(raw);
+			} catch (err) {
+				this.ignore({ reason: 'malformed', text: raw, seenType: partType });
+				void err;
+				return this.snapshot();
+			}
+			if (accepted) this.seenFrames.add(normalized);
 		}
 
 		if (this.lockedType === null && accepted) {
@@ -156,6 +169,7 @@ export class URReceiver extends Emitter<URReceiverEvents> {
 		this.completed = false;
 		this.failed = false;
 		this.lastReceivedCount = 0;
+		this.seenFrames.clear();
 		this.clearStall();
 	}
 
