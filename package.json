@@ -1,6 +1,6 @@
 {
 	"name": "@nkwib/ur-scanner",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Browser receiver for animated QR codes carrying BC-UR (Uniform Resources) payloads. Camera to bytes, no wallet required. Framework-agnostic decode core, pluggable frame sources, and a drop-in <ur-scanner> web component.",
 	"license": "MIT",
 	"author": "Gabriele Magno",

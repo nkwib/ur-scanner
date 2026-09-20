@@ -4,6 +4,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-20
+
 ### Changed
 
 - **The camera loop scans once per delivered camera frame** instead of on a fixed 120 ms timer, using `requestVideoFrameCallback` where available and `requestAnimationFrame` (capped at ~33 ms) where it is not. Animated QR is a throughput problem, and a fixed interval capped the receiver at about 8 parts per second no matter how fast the sender ran. Measured against a fake camera device: a 30 fps sender went from 2926 ms to 426 ms (6.9x), a 15 fps sender from 2003 ms to 760 ms (2.6x), a 6 fps sender is unchanged because the sender, not the loop, is the limit there. `scanIntervalMs` still works and still means "at most this often"; it is simply no longer the default bottleneck. Set it if you want the old behaviour or want to trade throughput for battery.
@@ -22,7 +24,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - The camera loop no longer reassigns `canvas.width` / `canvas.height` on every scan, which dropped the backing store and reset context state each time. It now resizes only when the camera's dimensions change, and only for detectors that need a canvas at all.
 - `URReceiver` no longer re-submits an exact duplicate frame to `@ngraveio/bc-ur`. Its part counter has no duplicate detection of its own (see ngraveio/bc-ur#4), so a camera lingering on one frame inflated `estimatedPercent` past the true fraction of unique parts recovered.
 
-## [0.1.0] - unreleased
+## [0.1.0] - 2026-07-21
 
 Initial release: a framework-agnostic browser receiver for animated BC-UR QR codes.
 
@@ -35,5 +37,6 @@ Initial release: a framework-agnostic browser receiver for animated BC-UR QR cod
 - Two-device / one-device demo, fixture-driven vitest suite (including out-of-order and 40%-loss decode), and a Playwright smoke test of the demo.
 - Documentation: tutorial, fountain-code explainer, architecture, reference, physical tuning field notes, testing-without-a-camera guide, framework and camera and file-input how-tos, wallet-payloads guide, and a community compatibility matrix.
 
-[Unreleased]: https://example.com/compare/v0.1.0...HEAD
-[0.1.0]: https://example.com/releases/tag/v0.1.0
+[Unreleased]: https://github.com/nkwib/ur-scanner/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/nkwib/ur-scanner/compare/v0.1.0...v0.2.0
+[0.1.0]: https://www.npmjs.com/package/@nkwib/ur-scanner/v/0.1.0
