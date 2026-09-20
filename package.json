@@ -10,6 +10,9 @@
 	},
 	"homepage": "https://github.com/nkwib/ur-scanner#readme",
 	"bugs": "https://github.com/nkwib/ur-scanner/issues",
+	"publishConfig": {
+		"access": "public"
+	},
 	"type": "module",
 	"sideEffects": [
 		"./dist/element.js",
