@@ -19,7 +19,6 @@ Pre-1.0: only the latest `0.x` release receives fixes.
 
 Please report privately. Do **not** open a public issue for a security problem.
 
-- Use GitHub's private "Report a vulnerability" (Security Advisories) on the repository, or
-- email the maintainer listed in `package.json`.
+Use GitHub's private "Report a vulnerability" (Security Advisories) on the repository: open the **Security** tab and choose **Report a vulnerability**.
 
 Include a description, affected versions, and a reproduction (a fixture of part strings is usually enough, no camera required). We aim to acknowledge within a few days and will credit you in the advisory unless you prefer otherwise.
